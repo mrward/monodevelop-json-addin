@@ -71,6 +71,7 @@
     <Compile Include="MonoDevelop.LanguageServices.Messages\DidChangeTextDocumentParams.cs" />
     <Compile Include="MonoDevelop.LanguageServices.Messages\VersionedTextDocumentIdentifier.cs" />
     <Compile Include="MonoDevelop.LanguageServices.Messages\TextDocumentContentChangeEvent.cs" />
+    <Compile Include="MonoDevelop.LanguageServices.Messages\DidCloseTextDocumentParams.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="JsonBinding.addin.xml" />

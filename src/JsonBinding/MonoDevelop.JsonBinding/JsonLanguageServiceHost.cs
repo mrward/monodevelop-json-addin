@@ -149,6 +149,20 @@ namespace MonoDevelop.JsonBinding
 
 		public void CloseDocument (Document document)
 		{
+			var textDocument = new TextDocumentIdentifier {
+				uri = document.FileName
+			};
+
+			var messageParams = new DidCloseTextDocumentParams {
+				textDocument = textDocument
+			};
+
+			var notification = new NotificationMessage {
+				method = "textDocument/didClose",
+				@params = messageParams
+			};
+
+			client.SendMessage (notification);
 		}
 
 		public Task<ResponseMessage> GetCompletionInfo (FilePath fileName, CodeCompletionContext context)
