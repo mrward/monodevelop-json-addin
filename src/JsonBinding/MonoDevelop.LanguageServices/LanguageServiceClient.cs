@@ -45,7 +45,8 @@ namespace MonoDevelop.LanguageServices
 
 			var startInfo = new ProcessStartInfo {
 				FileName = "node",
-				Arguments = startupFile,
+				//Arguments = "--debug --no-lazy " + startupFile,
+				Arguments = "\"" + startupFile + "\"",
 				CreateNoWindow = true,
 				RedirectStandardError = true,
 				RedirectStandardOutput = true,
