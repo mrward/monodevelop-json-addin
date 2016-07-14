@@ -36,6 +36,7 @@ using MonoDevelop.Ide.CodeCompletion;
 using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.Editor.Extension;
 using MonoDevelop.Ide.TypeSystem;
+using MonoDevelop.LanguageServices;
 using MonoDevelop.LanguageServices.Messages;
 
 namespace MonoDevelop.JsonBinding
@@ -72,23 +73,27 @@ namespace MonoDevelop.JsonBinding
 			get { return "json"; }
 		}
 
-		//public async override Task<ICompletionDataList> HandleCodeCompletionAsync (
-		//	CodeCompletionContext completionContext,
-		//	char completionChar,
-		//	CancellationToken token = default (CancellationToken))
-		//{
-		//	try {
-		//		ResponseMessage response = await host.GetCompletionInfo (Editor.FileName, completionContext);
-		//		if (response == null)
-		//			return null;
+		public async override Task<ICompletionDataList> HandleCodeCompletionAsync (
+			CodeCompletionContext completionContext,
+			char completionChar,
+			CancellationToken token = default (CancellationToken))
+		{
+			try {
+				ResponseMessage response = await host.GetCompletionInfo (Editor.FileName, completionContext);
+				if (response == null)
+					return null;
 
-		//		var completionList = response.result.ToObject<CompletionList> ();
-		//		Console.WriteLine (response.id);
-		//	} catch (Exception ex) {
-		//		LoggingService.LogError ("HandleCodeCompletionAsync error.", ex);
-		//	}
-		//	return null;
-		//}
+				var completionList = response.result.ToObject<CompletionList> ();
+				var items = new CompletionDataList ();
+				items.TriggerWordLength = 1;
+				items.AddRange (completionList.items.Select (item => new LanguageServiceCompletionData (item)));
+
+				return items;
+			} catch (Exception ex) {
+				LoggingService.LogError ("HandleCodeCompletionAsync error.", ex);
+			}
+			return null;
+		}
 
 		void OnDiagnostics (object sender, DiagnosticEventArgs e)
 		{

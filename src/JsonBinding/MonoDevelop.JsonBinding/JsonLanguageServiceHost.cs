@@ -172,9 +172,8 @@ namespace MonoDevelop.JsonBinding
 					uri = fileName
 				},
 				position = new Position {
-					line = 1, character = 1
-					//line = context.TriggerLine,
-					//character = context.TriggerLineOffset
+					line = context.TriggerLine - 1,
+					character = context.TriggerLineOffset - 1
 				}
 			};
 
