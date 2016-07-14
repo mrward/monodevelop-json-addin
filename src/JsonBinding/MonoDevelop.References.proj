@@ -20,5 +20,9 @@
       <Private>False</Private>
       <HintPath>$(MDBinDir)\Newtonsoft.Json.dll</HintPath>
     </Reference>
+     <Reference Include="System.Collections.Immutable">
+      <Private>False</Private>
+      <HintPath>$(MDBinDir)\System.Collections.Immutable.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

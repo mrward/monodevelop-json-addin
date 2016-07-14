@@ -1,0 +1,11 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PrepareForRunDependsOn>$(PrepareForRunDependsOn);MyPostBuildTarget</PrepareForRunDependsOn>
+  </PropertyGroup>
+  <ItemGroup>
+    <TemplateItem Include="..\JsonLanguageServer\**\*.*" />
+  </ItemGroup>
+  <Target Name="MyPostBuildTarget">
+    <Copy SourceFiles="@(TemplateItem)" DestinationFolder="$(OutputPath)Server\%(RecursiveDir)" />
+  </Target>
+</Project>

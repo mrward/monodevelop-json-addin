@@ -1,0 +1,12 @@
+﻿<ExtensionModel>
+	<Runtime>
+		<Import assembly="MonoDevelop.JsonBinding.dll" />
+	</Runtime>
+	
+	<Extension path="/MonoDevelop/Ide/TextEditorExtensions">
+		<Class
+			id="JsonTextEditorExtension"
+			fileExtensions=".json"
+			class="MonoDevelop.JsonBinding.JsonTextEditorExtension" />
+	</Extension>
+</ExtensionModel>
