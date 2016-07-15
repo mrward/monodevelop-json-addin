@@ -73,6 +73,7 @@
     <Compile Include="MonoDevelop.LanguageServices.Messages\TextDocumentContentChangeEvent.cs" />
     <Compile Include="MonoDevelop.LanguageServices.Messages\DidCloseTextDocumentParams.cs" />
     <Compile Include="MonoDevelop.LanguageServices\LanguageServiceCompletionData.cs" />
+    <Compile Include="MonoDevelop.LanguageServices\NodePath.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="JsonBinding.addin.xml" />

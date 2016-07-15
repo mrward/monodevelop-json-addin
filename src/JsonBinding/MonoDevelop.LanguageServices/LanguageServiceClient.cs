@@ -44,7 +44,7 @@ namespace MonoDevelop.LanguageServices
 			reader = new LanguageServiceResponseReader (ProcessResponse);
 
 			var startInfo = new ProcessStartInfo {
-				FileName = "node",
+				FileName = new NodePath ().FileName,
 				//Arguments = "--debug --no-lazy " + startupFile,
 				Arguments = "\"" + startupFile + "\"",
 				CreateNoWindow = true,
