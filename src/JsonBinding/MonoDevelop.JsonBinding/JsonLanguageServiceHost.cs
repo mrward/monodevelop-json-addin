@@ -117,6 +117,9 @@ namespace MonoDevelop.JsonBinding
 
 			associations["project.json"] = new string[] { new Uri (schema).ToString () };
 
+			schema = Path.Combine (directory, "Schemas", "global.json");
+			associations["global.json"] = new string[] { new Uri (schema).ToString () };
+
 			var schemaNotification = new NotificationMessage {
 				method = "json/schemaAssociations",
 				@params = associations
