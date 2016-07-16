@@ -27,6 +27,7 @@
 
 using MonoDevelop.Core;
 using MonoDevelop.Ide.CodeCompletion;
+using MonoDevelop.Ide.Editor;
 using MonoDevelop.Ide.Editor.Extension;
 using MonoDevelop.Ide.Gui;
 using MonoDevelop.LanguageServices.Messages;
@@ -36,12 +37,18 @@ namespace MonoDevelop.LanguageServices
 	public class LanguageServiceCompletionData : CompletionData
 	{
 		CompletionItem completionItem;
+		TextEditor editor;
 
-		public LanguageServiceCompletionData (CompletionItem completionItem)
+		public LanguageServiceCompletionData (CompletionItem completionItem, TextEditor editor)
 		{
 			this.completionItem = completionItem;
+			this.editor = editor;
 			Icon = GetIcon (completionItem);
 			CompletionText = completionItem.insertText.Replace("{{", "").Replace ("}}", "");
+		}
+
+		public CompletionItem CompletionItem {
+			get { return completionItem; }
 		}
 
 		public override string DisplayText {
@@ -94,6 +101,28 @@ namespace MonoDevelop.LanguageServices
 
 				default:
 				return null;
+			}
+		}
+
+		public override void InsertCompletionText (CompletionListWindow window, ref KeyActions ka, KeyDescriptor descriptor)
+		{
+			if (completionItem?.textEdit?.range != null) {
+				var range = completionItem.textEdit.range;
+				int insertStartOffset = editor.LocationToOffset (range.start.line + 1, range.start.character + 1);
+				int charactersToReplace = editor.CaretOffset - insertStartOffset;
+				editor.ReplaceText (insertStartOffset, charactersToReplace, CompletionText);
+
+				int caretOffset = completionItem.insertText.IndexOf ("{{");
+				if (caretOffset >= 0) {
+					int selectionLength = completionItem.insertText.IndexOf ("}}", caretOffset) - caretOffset - 2;
+					caretOffset += insertStartOffset;
+					editor.CaretOffset = caretOffset;
+					if (selectionLength > 0) {
+						editor.SetSelection (editor.CaretOffset, editor.CaretOffset + selectionLength);
+					}
+				}
+			} else {
+				base.InsertCompletionText (window, ref ka, descriptor);
 			}
 		}
 	}

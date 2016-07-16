@@ -86,8 +86,16 @@ namespace MonoDevelop.JsonBinding
 				var completionList = response.result.ToObject<CompletionList> ();
 				var items = new CompletionDataList ();
 				items.TriggerWordLength = 1;
-				items.AddRange (completionList.items.Select (item => new LanguageServiceCompletionData (item)));
+				items.AddRange (completionList.items.Select (item => new LanguageServiceCompletionData (item, Editor)));
 
+				if (items.Any ()) {
+					var firstItem = (LanguageServiceCompletionData)items.FirstOrDefault();
+					var textEditRange = firstItem.CompletionItem?.textEdit?.range;
+					if (textEditRange != null) {
+						items.TriggerWordLength = textEditRange.end.character - textEditRange.start.character + 1;
+						completionContext.TriggerLineOffset = textEditRange.start.character + 1;
+					}
+				}
 				return items;
 			} catch (Exception ex) {
 				LoggingService.LogError ("HandleCodeCompletionAsync error.", ex);
