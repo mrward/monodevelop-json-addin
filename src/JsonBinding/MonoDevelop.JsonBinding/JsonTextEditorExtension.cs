@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MonoDevelop.Core;
@@ -79,6 +80,8 @@ namespace MonoDevelop.JsonBinding
 			CancellationToken token = default (CancellationToken))
 		{
 			try {
+				TextSegment wordSegment = GetWordRangeAtPosition (completionContext.TriggerLineOffset, Editor.GetLine (completionContext.TriggerLine));
+
 				ResponseMessage response = await host.GetCompletionInfo (Editor.FileName, completionContext);
 				if (response == null)
 					return null;
@@ -89,11 +92,9 @@ namespace MonoDevelop.JsonBinding
 				items.AddRange (completionList.items.Select (item => new LanguageServiceCompletionData (item, Editor)));
 
 				if (items.Any ()) {
-					var firstItem = (LanguageServiceCompletionData)items.FirstOrDefault();
-					var textEditRange = firstItem.CompletionItem?.textEdit?.range;
-					if (textEditRange != null) {
-						items.TriggerWordLength = textEditRange.end.character - textEditRange.start.character + 1;
-						completionContext.TriggerLineOffset = textEditRange.start.character + 1;
+					if (!wordSegment.IsEmpty) {
+						items.TriggerWordLength = wordSegment.Length;
+						completionContext.TriggerLineOffset = wordSegment.Offset;
 					}
 				}
 				return items;
@@ -101,6 +102,31 @@ namespace MonoDevelop.JsonBinding
 				LoggingService.LogError ("HandleCodeCompletionAsync error.", ex);
 			}
 			return null;
+		}
+
+		TextSegment GetWordRangeAtPosition (int column, IDocumentLine line)
+		{
+			string text = Editor.GetLineText (line);
+
+			string pattern = @"(-?\d*\.\d\w*)|([^\[\{\]\}\:\""\,\s]+)";
+
+			MatchCollection matches = Regex.Matches (text, pattern, RegexOptions.Singleline);
+
+			foreach (Match match in matches) {
+				string word = match.Value;
+				int endWord = match.Index + match.Length;
+				int startWord = match.Index;
+
+				int startColumn = startWord + 1;
+				int endColumn = endWord + 1;
+
+				if (startColumn <= column && column <= endColumn) {
+					Console.WriteLine ("GetWordRangeAtPosition: '{0}' start={1},length={2}", word, startColumn, word.Length);
+					return new TextSegment (startColumn, word.Length);
+				}
+			}
+
+			return new TextSegment ();
 		}
 
 		void OnDiagnostics (object sender, DiagnosticEventArgs e)
